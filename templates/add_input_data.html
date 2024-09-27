@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Input Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #343a40;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .form-range {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e9ecef;
+            outline: none;
+        }
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+        .form-range::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+        .select2-container .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            background-color: #ffffff;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #495057;
+            line-height: 36px; /* Center vertically */
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px; /* Center the arrow */
+        }
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6c757d; /* Placeholder color */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">CRUD Application</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">  <!-- Added ms-auto for right alignment -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_data') }}">Master Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_master_pic_data') }}">Master PIC</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_input_data') }}">Input Data</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('report') }}">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h2 class="text-center">Add New Input Data</h2>
+        <form method="POST" class="mt-4">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="fungsi" class="form-label">Function</label>
+                    <select id="fungsi" name="fungsi" class="form-control select2">
+                        {% for menu in master_data %}
+                            <option value="{{ menu[1] }}">{{ menu[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="MenuUtama" class="form-label">Menu Utama</label>
+                    <select id="MenuUtama" name="MenuUtama" class="form-control select2">
+                        {% for menu in master_data %}
+                            <option value="{{ menu[2] }}">{{ menu[2] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="SubMenu" class="form-label">Sub Menu</label>
+                    <select id="SubMenu" name="SubMenu" class="form-control select2">
+                        {% for submenu in master_data %}
+                            <option value="{{ submenu[3] }}">{{ submenu[3] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="KodeProduk" class="form-label">Kode Produk</label>
+                    <select id="KodeProduk" name="KodeProduk" class="form-control select2">
+                        {% for submenu in master_data %}
+                            <option value="{{ submenu[4] }}">{{ submenu[4] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <!-- New Produk Field -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Produk" class="form-label">Produk</label>
+                    <select id="Produk" name="Produk" class="form-control select2">
+                        {% for produk in master_data %}
+                            <option value="{{ produk[5] }}">{{ produk[5] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="NamaAkad" class="form-label">Nama Akad</label>
+                    <select id="NamaAkad" name="NamaAkad" class="form-control select2">
+                        {% for submenu in master_data %}
+                            <option value="{{ submenu[6] }}">{{ submenu[6] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="PIC" class="form-label">PIC</label>
+                    <select id="PIC" name="PIC" class="form-control select2">
+                        {% for pic in master_pic %}
+                            <option value="{{ pic[1] }}">{{ pic[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <!-- Slider Section -->
+            <h5 class="mt-4">Scenarios and Steps</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="scenario_positive" class="form-label">Scenario Positive</label>
+                    <input type="range" id="scenario_positive" name="scenario_positive" class="form-range" min="0" max="100" value="50">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span id="scenario_positive_value">50</span>
+                        <span>100</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="scenario_negative" class="form-label">Scenario Negative</label>
+                    <input type="range" id="scenario_negative" name="scenario_negative" class="form-range" min="0" max="100" value="50">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span id="scenario_negative_value">50</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="step_positive" class="form-label">Step Positive</label>
+                    <input type="range" id="step_positive" name="step_positive" class="form-range" min="0" max="100" value="50">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span id="step_positive_value">50</span>
+                        <span>100</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="step_negative" class="form-label">Step Negative</label>
+                    <input type="range" id="step_negative" name="step_negative" class="form-range" min="0" max="100" value="50">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span id="step_negative_value">50</span>
+                        <span>100</span>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Input Data</button>
+        </form>
+    </div>
+
+    <!-- Include jQuery and Select2 JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select an option",
+                allowClear: true
+            });
+
+            // Update slider value display
+            $('.form-range').on('input', function() {
+                const value = $(this).val();
+                const spanId = $(this).attr('id') + '_value';
+                $('#' + spanId).text(value);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master PIC Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #007bff;
+        }
+        h2 {
+            color: #343a40;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">CRUD Application</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">  <!-- Added ms-auto for right alignment -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_data') }}">Master Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_master_pic_data') }}">Master PIC</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_input_data') }}">Input Data</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('report') }}">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h2 class="text-center">Master Data</h2>
+        <div class="d-flex justify-content-between my-3">
+            <a href="{{ url_for('add_data') }}" class="btn btn-success">Add New Record</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>function</th>
+                        <th>Menu Utama</th>
+                        <th>Sub Menu</th>
+                        <th>Kode Produk</th>
+                        <th>Nama Produk</th>
+                        <th>Akad</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for idx, row in enumerate(data) %}
+                    <tr>
+                        <td>{{ row[0] if row[0] is not none else '-' }}</td>
+                        <td>{{ row[1] if row[1] is not none else '-' }}</td>
+                        <td>{{ row[2] if row[2] is not none else '-' }}</td>
+                        <td>{{ row[3] if row[3] is not none else '-' }}</td>
+                        <td>{{ row[4] if row[4] is not none else '-' }}</td>
+                        <td>{{ row[5] if row[5] is not none else '-' }}</td>
+                        <td>{{ row[6] if row[6] is not none else '-' }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_data', row_number=idx+2) }}" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="{{ url_for('delete_data', row_number=idx+2) }}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

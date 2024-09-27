@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Menu</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Flatpickr CSS for date picker -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Flatpickr JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #007bff;
+        }
+        h2 {
+            color: #343a40;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">CRUD Application</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">  <!-- Added ms-auto for right alignment -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_data') }}">Master Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_master_pic_data') }}">Master PIC</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('show_input_data') }}">Input Data</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('report') }}">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Report Menu</h1>
+
+        <!-- Filter Form -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form id="filterForm" class="row g-3">
+                    <!-- Dropdown to select menu type -->
+                    <div class="col-md-4">
+                        <label for="menu_type" class="form-label">Pilih Filter</label>
+                        <select id="menu_type" class="form-select">
+                            <option value="" disabled selected>Pilih Filter</option>
+                            <option value="Function">Function</option>
+                            <option value="Menu Utama">Menu Utama</option>
+                            <option value="Sub Menu">Sub Menu</option>
+                            <option value="Kode Produk">Kode Produk</option>
+                            <option value="Produk">Produk</option>
+                            <option value="Nama Akad">Nama Akad</option>
+                            <option value="PIC">PIC</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown to populate based on first selection -->
+                    <div class="col-md-4">
+                        <label for="menu_value" class="form-label">Pilih Data</label>
+                        <select id="menu_value" class="form-select">
+                            <option value="" disabled selected>Pilih Data</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date_range" class="form-label">Filter by Date Range</label>
+                        <input type="text" id="date_range" class="form-control" placeholder="Select Date Range">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search Results Section -->
+        <div class="mt-4">
+            <h4 class="text-center">Hasil Pencarian</h4>
+            <div id="search_results" class="card shadow-sm">
+                <div class="card-body">
+                    <p class="text-muted text-center">Pilih filter dan data untuk menampilkan hasil.</p>
+
+                    <!-- Result Table -->
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Function</th>
+                                <th>Menu Utama</th>
+                                <th>Sub Menu</th>
+                                <th>Kode Produk</th>
+                                <th>Produk</th>
+                                <th>Nama Akad</th>
+                                <th>Scenario Positive</th>
+                                <th>Scenario Negative</th>
+                                <th>Total Scenario</th>
+                                <th>Total Step Positive</th>
+                                <th>Total Step Negative</th>
+                                <th>Total Step</th>
+                                <th>PIC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="result_table">
+                            <!-- Data will be populated here by AJAX -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7"><strong>Total</strong></td>
+                                <td id="sum_scenario_positive">0</td>
+                                <td id="sum_scenario_negative">0</td>
+                                <td id="sum_total_scenario">0</td>
+                                <td id="sum_step_positive">0</td>
+                                <td id="sum_step_negative">0</td>
+                                <td id="sum_total_step">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js for better functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Initialize Flatpickr for date range
+        flatpickr("#date_range", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            locale: {
+                rangeSeparator: " to "
+            },
+            onClose: function(selectedDates, dateStr, instance) {
+                // Trigger the search when the date range is changed
+                triggerSearch();
+            }
+        });
+    
+        // AJAX call to get data from Master Data or Master PIC based on selected menu
+        $('#menu_type').change(function() {
+            let selectedMenu = $(this).val();
+            
+            $.ajax({
+                url: '/get_master_data',
+                type: 'POST',
+                data: {menu: selectedMenu},
+                success: function(data) {
+                    $('#menu_value').empty();
+                    $('#menu_value').append('<option value="" disabled selected>Pilih Data</option>');
+                    data.forEach(function(value) {
+                        $('#menu_value').append(`<option value="${value}">${value}</option>`);
+                    });
+                }
+            });
+        });
+    
+        // Function to trigger search based on selected value and date range
+        function triggerSearch() {
+            let selectedMenu = $('#menu_type').val();
+            let selectedValue = $('#menu_value').val();
+            let dateRange = $('#date_range').val();  // Get the selected date range
+    
+            if (selectedMenu && selectedValue) {
+                $.ajax({
+                    url: '/search_input',
+                    type: 'POST',
+                    data: {
+                        menu: selectedMenu,
+                        value: selectedValue,
+                        date_range: dateRange  // Pass date range to backend
+                    },
+                    success: function(data) {
+                        let sumScenarioPositive = 0;
+                        let sumScenarioNegative = 0;
+                        let sumTotalScenario = 0;
+                        let sumStepPositive = 0;
+                        let sumStepNegative = 0;
+                        let sumTotalStep = 0;
+    
+                        $('#result_table').empty();
+                        if (data.length > 0) {
+                            data.forEach(function(row) {
+                                // Add values to sum variables
+                                sumScenarioPositive += row[7];
+                                sumScenarioNegative += row[8];
+                                sumTotalScenario += row[9];
+                                sumStepPositive += row[10];
+                                sumStepNegative += row[11];
+                                sumTotalStep += row[12];
+    
+                                let tableRow = `
+                                    <tr>
+                                        <td>${row[0]}</td>
+                                        <td>${row[1]}</td>
+                                        <td>${row[2]}</td>
+                                        <td>${row[3]}</td>
+                                        <td>${row[4]}</td>
+                                        <td>${row[5]}</td>
+                                        <td>${row[6]}</td>
+                                        <td>${row[7]}</td>
+                                        <td>${row[8]}</td>
+                                        <td>${row[9]}</td>
+                                        <td>${row[10]}</td>
+                                        <td>${row[11]}</td>
+                                        <td>${row[12]}</td>
+                                        <td>${row[13]}</td>
+                                    </tr>`;
+                                $('#result_table').append(tableRow);
+                            });
+    
+                            // Update footer totals
+                            $('#sum_scenario_positive').text(sumScenarioPositive);
+                            $('#sum_scenario_negative').text(sumScenarioNegative);
+                            $('#sum_total_scenario').text(sumTotalScenario);
+                            $('#sum_step_positive').text(sumStepPositive);
+                            $('#sum_step_negative').text(sumStepNegative);
+                            $('#sum_total_step').text(sumTotalStep);
+                        } else {
+                            $('#result_table').append('<tr><td colspan="14" class="text-center">Tidak ada hasil ditemukan.</td></tr>');
+                        }
+                    }
+                });
+            }
+        }
+    
+        // Trigger search when the menu value changes
+        $('#menu_value').change(function() {
+            triggerSearch();
+        });
+    </script>
+    
+</body>
+</html>
